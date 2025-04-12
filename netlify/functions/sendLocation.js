@@ -5,7 +5,7 @@ exports.handler = async (event) => {
   try {
     const { name, latitude, longitude } = JSON.parse(event.body);
 
-    const baseId = "appXXXXXXXXXXXX"; // Replace with your actual Airtable Base ID
+    const baseId = "appRs0OLbQJLYspf5";
     const tableName = "REGISTRO DELLE PRESENZE";
     const airtableKey = process.env.AIRTABLE_API_KEY;
 
