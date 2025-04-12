@@ -24,6 +24,8 @@ exports.handler = async (event) => {
       })
     });
 
+    // ...rest of your function
+
     const contentType = airtableResponse.headers.get("content-type");
     let data = null;
     if (contentType && contentType.includes("application/json")) {
