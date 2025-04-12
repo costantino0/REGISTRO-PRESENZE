@@ -1,10 +1,10 @@
-// ✅ Using native fetch (no imports needed)
+// ✅ Native fetch — no need to import
 
 exports.handler = async (event) => {
   try {
-    const { name, latitude, longitude } = JSON.parse(event.body);
+    const { name, latitude, longitude, accuracy, type } = JSON.parse(event.body);
 
-    const baseId = "appRs0OLbQJLYspf5"; // ✅ Your real Airtable base ID
+    const baseId = "appRs0OLbQJLYspf5"; // ✅ Il tuo Airtable Base ID
     const tableName = "REGISTRO DELLE PRESENZE";
     const airtableKey = process.env.AIRTABLE_API_KEY;
 
@@ -19,8 +19,10 @@ exports.handler = async (event) => {
         body: JSON.stringify({
           fields: {
             "Name/ID": name,
-            Latitude: latitude,
-            Longitude: longitude,
+            "Latitude": latitude,
+            "Longitude": longitude,
+            "Accuratezza (m)": accuracy,      // 🟡 Nuovo campo
+            "Tipo timbratura": type        // 🟢 Nuovo campo
           },
         }),
       }
