@@ -1,0 +1,68 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employee Location Check-In</title>
+</head>
+<body>
+  <h2>📍 Send Your Location</h2>
+  <input type="text" id="name" readonly />
+  <br /><br />
+  <button onclick="sendLocation()">Send Location</button>
+  <pre id="log"></pre>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const employeeId = params.get("id") || "Unknown";
+    document.getElementById("name").value = employeeId;
+
+    function log(msg) {
+      document.getElementById("log").textContent += msg + "\n";
+    }
+
+    async function sendLocation() {
+      log("\uD83D\uDCCB Getting location...");
+      if (!navigator.geolocation) {
+        log("❌ Geolocation not supported.");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const payload = {
+          name: employeeId,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+
+        log("\uD83D\uDCE4 Sending data:\n" + JSON.stringify(payload, null, 2));
+
+        try {
+          const res = await fetch("/.netlify/functions/sendLocation", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+
+          const text = await res.text();
+          log("\uD83D\uDCE5 Response:\n" + text);
+
+          const contentType = res.headers.get("content-type");
+          if (!contentType || !contentType.includes("application/json")) {
+            log("⚠️ Response not in JSON format.");
+            return;
+          }
+
+          const result = JSON.parse(text);
+          log(result.success ? "✅ Location sent!" : "❌ Error: " + result.error);
+        } catch (err) {
+          log("❌ Network error: " + err.message);
+        }
+      }, (error) => {
+        log("❌ Geolocation error: " + error.message);
+      });
+    }
+  </script>
+</body>
+</html>
